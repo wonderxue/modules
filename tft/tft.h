@@ -1,6 +1,10 @@
 #ifndef __TFT_H__
 #define __TFT_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <ESP8266WiFi.h>
 
 #define TFT_SCL         12
@@ -41,5 +45,8 @@ void TFT_SetXY(unsigned short x,unsigned short y);
 void Gui_DrawPoint(unsigned short x,unsigned short y,unsigned short Data);
 void TFT_Clear(unsigned short Color);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif  //__TFT_H__
