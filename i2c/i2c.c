@@ -1,11 +1,9 @@
 #include "i2c.h"
+extern void ErrorReport(char * source,char * code);
 unsigned char _i2c_TimeOut = 200;
-__attribute__((weak)) void _i2c_Error(char *code)
+void _i2c_Error(char *code)
 {
-    //#warning redefine function i2cError may better
-    HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, RESET);
-    while (1)
-        ;
+    ErrorReport("--I2C--",code);
 }
 
 void _i2c_Start()
@@ -13,9 +11,9 @@ void _i2c_Start()
     _i2c_SDA_Out;
     _i2c_SDA_H;
     _i2c_SCL_H;
-    _i2c_Delay(5);
+    _i2c_DelayUs(5);
     _i2c_SDA_L;
-    _i2c_Delay(6);
+    _i2c_DelayUs(6);
     _i2c_SCL_L;
 }
 void _i2c_Stop()
@@ -24,9 +22,9 @@ void _i2c_Stop()
     _i2c_SCL_L;
     _i2c_SDA_L;
     _i2c_SCL_H;
-    _i2c_Delay(6);
+    _i2c_DelayUs(6);
     _i2c_SDA_H;
-    _i2c_Delay(6);
+    _i2c_DelayUs(6);
 }
 void _i2c_SendAck(_Bool ack) //低 应答
 {
@@ -36,9 +34,9 @@ void _i2c_SendAck(_Bool ack) //低 应答
         _i2c_SDA_H;
     else
         _i2c_SDA_L;
-    _i2c_Delay(2);
+    _i2c_DelayUs(2);
     _i2c_SCL_H;
-    _i2c_Delay(5);
+    _i2c_DelayUs(5);
     _i2c_SCL_L;
 }
 _Bool _i2c_WaitAck()
@@ -46,9 +44,9 @@ _Bool _i2c_WaitAck()
     unsigned char tempTime = 0;
     _i2c_SDA_In; //配置为上拉输入。
     _i2c_SDA_H;  //主机释放数据总线，等待从机产生应答信号
-    _i2c_Delay(1);
+    _i2c_DelayUs(1);
     _i2c_SCL_H;
-    _i2c_Delay(1);
+    _i2c_DelayUs(1);
     //等待从机对数据总线的操作。低电平代表应答
     while (_i2c_SDA_Read)
     {
@@ -67,7 +65,7 @@ _Bool _i2c_Write(unsigned char data)
 {
     _i2c_SDA_Out;
     _i2c_SCL_L;
-    _i2c_Delay(2);
+    _i2c_DelayUs(2);
     for (int i = 0; i < 8; i++) //从高位开始一位一位地传送
     {
         //发数据放到数据线上
@@ -78,10 +76,10 @@ _Bool _i2c_Write(unsigned char data)
         data = data << 1; //数据左移一位
         //开始发送数据
         _i2c_SCL_H;
-        _i2c_Delay(2);
+        _i2c_DelayUs(2);
         //上一个数据发送完毕，为下一个数据发送准备
         _i2c_SCL_L;
-        _i2c_Delay(2);
+        _i2c_DelayUs(2);
     }
     return _i2c_WaitAck();
 }
@@ -94,11 +92,11 @@ unsigned char _i2c_Read(_Bool ack)
         //数据准备
         data = data << 1;
         _i2c_SCL_L;
-        _i2c_Delay(2);
+        _i2c_DelayUs(2);
         _i2c_SCL_H;        //主机开始读数据，从机不能再改变数据了，即改变SDA的电平
         if (_i2c_SDA_Read) //接收到的是1
             data++;
-        _i2c_Delay(1);
+        _i2c_DelayUs(1);
     }
     _i2c_SendAck(ack);
     return data;

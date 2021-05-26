@@ -1,25 +1,35 @@
 #ifndef __I2C_H__
 #define __I2C_H__
 
+#include <Arduino.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "gpio.h"
-#include "main.h"
 //硬件配置
 #define _i2c_SDA     13
 #define _i2c_SCL     12
-#define _i2c_SCL_L   HAL_GPIO_WritePin(SCL_GPIO_Port,SCL_Pin,RESET)
-#define _i2c_SCL_H   HAL_GPIO_WritePin(SCL_GPIO_Port,SCL_Pin,SET)
-#define _i2c_SDA_L   HAL_GPIO_WritePin(SDA_GPIO_Port,SDA_Pin,RESET)
-#define _i2c_SDA_H   HAL_GPIO_WritePin(SDA_GPIO_Port,SDA_Pin,SET)
-#define _i2c_SDA_In  SDAIn()
-#define _i2c_SDA_Out SDAOut()
-#define _i2c_SCL_Out SCLOut()
-#define _i2c_SDA_Read HAL_GPIO_ReadPin(SDA_GPIO_Port,SDA_Pin)
-#define _i2c_Delay(x) delay_us(x)
-extern void delay_us(int us);
+
+#define _i2c_PinMode(x,y)  pinMode(x, y)
+#define _i2c_PinWrite(x,y) digitalWrite(x, y)
+#define _i2c_PinRead(x)    digitalRead(x)
+
+#define _i2c_INPUT INPUT
+#define _i2c_OUTPUT OUTPUT
+#define _i2c_HIGH HIGH
+#define _i2c_LOW LOW
+
+#define _i2c_SCL_L   _i2c_PinWrite(_i2c_SCL,_i2c_LOW)
+#define _i2c_SCL_H   _i2c_PinWrite(_i2c_SCL,_i2c_HIGH)
+#define _i2c_SDA_L   _i2c_PinWrite(_i2c_SDA,_i2c_LOW)
+#define _i2c_SDA_H   _i2c_PinWrite(_i2c_SDA,_i2c_HIGH)
+#define _i2c_SDA_In  _i2c_PinMode(_i2c_SDA,_i2c_INPUT)
+#define _i2c_SDA_Out _i2c_PinMode(_i2c_SDA,_i2c_OUTPUT)
+#define _i2c_SCL_Out _i2c_PinMode(_i2c_SCL,_i2c_OUTPUT)
+#define _i2c_SDA_Read _i2c_PinRead(_i2c_SDA)
+#define _i2c_DelayUs(x) delayUs(x)
+
 //功能定义
 unsigned char i2cBegin(unsigned short dev_addr);
 void i2cSetTimeOut(int count);

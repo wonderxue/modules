@@ -1,15 +1,14 @@
 #ifndef __MPU__
 #define __MPU__
 
+#include "i2c.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "i2c.h"
-#include "main.h"
-
 #define _mpu_Adress 0x68
-
+#define _mpu_DelayMs(x)  delay(x)
 struct mpu_Read
 {
     unsigned char ACCEL_XOUT;

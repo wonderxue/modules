@@ -1,11 +1,11 @@
 #ifndef __OLED_H__
 #define __OLED_H__
 
+#include "i2c.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include "i2c.h"
 
 //Device Information
 #define _oled_Adress 0x3c

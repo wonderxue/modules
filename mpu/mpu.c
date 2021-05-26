@@ -28,7 +28,7 @@ void mpuInit()
 {
     _mpu_Fd = i2cBegin(_mpu_Adress);
     _mpu_WriteCmd(_mpu_Config.Pow_Manage, 0x80);
-    HAL_Delay(100);
+    _mpu_DelayMs(100);
     _mpu_WriteCmd(_mpu_Config.Pow_Manage, 0x00);
     _mpu_WriteCmd(_mpu_Config.Sample_Rate, 0x07);
     _mpu_WriteCmd(_mpu_Config.AC_Self_Check, 0x00); //+/-2g
