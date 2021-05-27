@@ -2,7 +2,7 @@
 #define __GRAPHIC_H__
 
 #include "base/objBase.h"
-#include "color/objColor.h"
+#include "buffer/colorBuffer.h"
 #include "transfer/objTransfer.h"
 #include "plot/objPlot.h"
 
