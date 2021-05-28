@@ -6,8 +6,10 @@
 
 #define FALSE   0
 #define TRUE    1
-#define MIN     (-10000)
-#define MAX     10000
+#define COLOR_DEPTH_MIN     (-100000)
+#define COLOR_DEPTH_MAX     100000
+#define PIXEL_LOC_MIN     0
+#define PIXEL_LOC_MAX     10000
 #ifdef __cplusplus
 extern "C" {
 #endif

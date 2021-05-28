@@ -8,23 +8,31 @@
 extern "C" {
 #endif
 
-typedef unsigned short color;
+typedef unsigned short colorInfo;
+typedef float colorDepth;
 typedef unsigned int bufferSize;
 typedef _Bool bufferState;
 
 //记录双缓冲(单线程,无DMA，好像没啥用)
+// typedef struct
+// {
+//     /* data */
+//     color color;
+//     colorDepth depth;
+// }colorInfo;
+
 typedef struct
 {
     /* data */
-    color * current;
+    colorInfo * current;
     bufferState state;
 }bufferHead;
 
 typedef struct
 {
     /* data */
-    color * prior;
-    color * next;
+    colorInfo * prior;
+    colorInfo * next;
     bufferHead *head;
     bufferSize bufferSize;
 }colorBuffer;

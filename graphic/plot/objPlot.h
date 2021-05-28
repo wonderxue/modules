@@ -3,22 +3,29 @@
 
 #include "../base/objBase.h"
 #include "../buffer/colorBuffer.h"
-
+#include <math.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef float PixelDepth;
-typedef unsigned char PixelLoc;
+typedef unsigned short PixelLoc;
 typedef struct
 {
     /* data */
     PixelLoc x;
     PixelLoc y;
-    color color;
+    colorInfo color;
     PixelDepth depth;
     Pixel *next;
 }Pixel;
+typedef struct
+{
+    /* data */
+    Pixel *root;
+    PixelSets *next;
+}PixelSets;
+
 typedef struct
 {
     /* data */
