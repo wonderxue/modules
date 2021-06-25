@@ -50,6 +50,7 @@ struct spiMode
 };
 extern struct spiMode spiMode;
 //功能定义
+void spiSetFrequency(unsigned int delayPeriod)
 unsigned char spiRegist(unsigned char spiSelectPin);
 unsigned char spiByteTransfer(unsigned char fd, unsigned char data, unsigned char spiMode);
 unsigned short spiWordTransfer(unsigned char fd, unsigned short data, unsigned char spiMode);
