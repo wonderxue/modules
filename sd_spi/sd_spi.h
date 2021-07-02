@@ -1,14 +1,20 @@
 #ifndef __SD_SPI_H__
 #define __SD_SPI_H__
-
-#include "../spi/spi.h"
+#include "stm32f1xx_hal.h"
+#include "spi.h"
+#include <string.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 #define _sd_False       0
 #define _sd_True        1
-#define _sd_CS          1
-// SD卡类型定义
+#define _sd_CS          DD5
+#define _sd_CS_Set      HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_SET)
+#define _sd_CS_Reset    HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_RESET)
+
+#define _sd_Spi_Speed_HIGH  1
+#define _sd_Spi_Speed_LOW   0
+//SD卡类型定义
 #define SD_TYPE_ERR     0X00
 #define SD_TYPE_MMC     0X01
 #define SD_TYPE_V1      0X02
@@ -16,8 +22,11 @@ extern "C" {
 #define SD_TYPE_V2HC    0X06	   
 // SD卡指令表	   
 #define CMD0    0       //卡复位
+#define CMD0_CRC 0x4a
+#define Fake_CRC 0xff    
 #define CMD1    1
-#define CMD8    8       //命令8 ,SEND_IF_COND
+#define CMD8    8
+#define CMD8_CRC 0x43        //命令8 ,SEND_IF_COND
 #define CMD9    9       //命令9 ,读CSD数据
 #define CMD10   10      //命令10,读CID数据
 #define CMD12   12      //命令12,停止数据传输
@@ -27,7 +36,7 @@ extern "C" {
 #define CMD23   23      //命令23,设置多sector写入前预先擦除N个block
 #define CMD24   24      //命令24,写sector
 #define CMD25   25      //命令25,写Multi sector
-#define ACMD41   41      //命令41,返回0x00
+#define ACMD41  41      //命令41,返回0x00
 #define CMD55   55      //命令55,返回0x01
 #define CMD58   58      //命令58,读OCR信息
 #define CMD59   59      //命令59,使能/禁止CRC,应返回0x00
@@ -47,8 +56,14 @@ extern "C" {
 #define MSD_PARAMETER_ERROR        0x40
 #define MSD_RESPONSE_FAILURE       0xFF
 
+//SD卡类型判断
+#define RES_SD_V2  0x01
+#define RES_SD_V1  0x05
 
 
+unsigned char sdInit();
+unsigned char sdGetCID(unsigned char *cid);
+unsigned int sdGetCapacityKB();
 #ifdef __cplusplus
 }
 #endif

@@ -1,5 +1,5 @@
 #include "i2c.h"
-extern void ErrorReport(char * source,char * code);
+extern void logReport(char * source,char * code,char );
 unsigned char _i2c_TimeOut = 200;
 void _i2c_Error(char *code)
 {

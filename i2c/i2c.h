@@ -2,7 +2,7 @@
 #define __I2C_H__
 
 #include <Arduino.h>
-
+#include "../basic_type_def.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
