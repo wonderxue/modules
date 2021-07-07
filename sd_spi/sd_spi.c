@@ -1,7 +1,7 @@
 #include "sd_spi.h"
-//unsigned char _sd_fd;//HAL库不用
+//_ubase8 _sd_fd;//HAL库不用
 extern void ErrorReport(char *source, char *code);
-unsigned int _sd_TimeOut = 500;
+_ubase32 _sd_TimeOut = 500;
 void _sd_Error(char *code)
 {
   ErrorReport("--SD--  ", code);
@@ -21,13 +21,13 @@ void _sd_SpiSpeedSet(_Bool Speed)
     Error_Handler();
   }
 }
-void _sd_SpiWriteRead(unsigned char *pIn, unsigned char *pOut, unsigned char ByteNum)
+void _sd_SpiWriteRead(_ubase8 *pIn, _ubase8 *pOut, _ubase8 ByteNum)
 {
   HAL_SPI_TransmitReceive(&hspi1, pIn, pOut, ByteNum, ByteNum * 500);
 }
-unsigned char _sd_SendCMD(unsigned char ucmd, unsigned char *arg, unsigned char crc)
+_ubase8 _sd_SendCMD(_ubase8 ucmd, _ubase8 *arg, _ubase8 crc)
 {
-  unsigned char  res, tmp = 0xff, cmd[6];
+  _ubase8  res, tmp = 0xff, cmd[6];
   int i=0;
   *cmd = ucmd | 0x40;
   memcpy(cmd + 1, arg, 4);
@@ -52,7 +52,7 @@ unsigned char _sd_SendCMD(unsigned char ucmd, unsigned char *arg, unsigned char 
 
 _Bool _sd_Reset()
 {
-  unsigned char res, tmp = 0xff, arg[4] = {0, 0, 0, 0};
+  _ubase8 res, tmp = 0xff, arg[4] = {0, 0, 0, 0};
   int i=0;
   for (i = 0; i < 0x2f; i++)
     _sd_SpiWriteRead(&tmp, &tmp, 1);
@@ -65,14 +65,14 @@ _Bool _sd_Reset()
   if (i == _sd_TimeOut)
   {
     _sd_Error("Reset time out");
-    return _sd_False;
+    return _FALSE;
   }
-  return _sd_True;
+  return _TRUE;
 }
 
-unsigned char _sd_Init()
+_ubase8 _sd_Init()
 {
-  unsigned char res, out[4], arg[4] = {0, 0, 0x01, 0xaa};
+  _ubase8 res, out[4], arg[4] = {0, 0, 0x01, 0xaa};
   int i=0;
   //判断是否为SD2.0
   res = _sd_SendCMD(CMD8, arg, CMD8_CRC);
@@ -174,39 +174,39 @@ unsigned char _sd_Init()
   }
   return SD_TYPE_ERR;
 }
-unsigned char  sdInit()
+_ubase8  sdInit()
 {
-  unsigned char res;
+  _ubase8 res;
   _sd_SpiSpeedSet(_sd_Spi_Speed_LOW);
   _sd_Reset();
   res = _sd_Init();
   _sd_SpiSpeedSet(_sd_Spi_Speed_HIGH);
   return res;
 }
-unsigned char sdGetCID(unsigned char *cid)
+_ubase8 sdGetCID(_ubase8 *cid)
 {
-  unsigned char res,arg[4]={0,0,0,0};
+  _ubase8 res,arg[4]={0,0,0,0};
   res=_sd_SendCMD(CMD10,arg,Fake_CRC);
   if(res!=MSD_RESPONSE_NO_ERROR)
   {
     _sd_Error("Get CID error");
-    return _sd_False;
+    return _FALSE;
   }
   _sd_CS_Reset;
   _sd_SpiWriteRead(cid,cid,16);
   _sd_CS_Set;
-  return _sd_True;
+  return _TRUE;
 }
-unsigned int sdGetCapacityKB()
+_ubase32 sdGetCapacityKB()
 {
-  unsigned int Capacity;
-  unsigned char res,acsd[16],csd[16]={0,0,0,0},C_SIZE_MULT,READ_BL_LEN;
-  unsigned short C_SIZE;
+  _ubase32 Capacity;
+  _ubase8 res,acsd[16],csd[16]={0,0,0,0},C_SIZE_MULT,READ_BL_LEN;
+  _ubase16 C_SIZE;
   res=_sd_SendCMD(CMD9,csd,Fake_CRC);
   if(res!=MSD_RESPONSE_NO_ERROR)
   {
     _sd_Error("Get CSD error");
-    return _sd_False;
+    return _FALSE;
   }
   _sd_CS_Reset;
   _sd_SpiWriteRead(acsd,csd,16);
@@ -215,14 +215,14 @@ unsigned int sdGetCapacityKB()
   {
     //v2
     _sd_Error("----V2------");
-    C_SIZE=csd[9]+((unsigned int)csd[8]<<8)+((unsigned int)(csd[7]&63)<<16)+1;
+    C_SIZE=csd[9]+((_ubase32)csd[8]<<8)+((_ubase32)(csd[7]&63)<<16)+1;
     Capacity=C_SIZE<<9;
   }
   else
   {
     //v1
     _sd_Error("----V1------");
-    C_SIZE=(csd[8]>>6)+((unsigned short)csd[7]<<2)+((unsigned short)(csd[6]&3)<<10);
+    C_SIZE=(csd[8]>>6)+((_ubase16)csd[7]<<2)+((_ubase16)(csd[6]&3)<<10);
     C_SIZE_MULT=((csd[10]&128)>>7)+((csd[9]&3)<<1);
     READ_BL_LEN=csd[5]&15;
     Capacity=(C_SIZE+1)<<(C_SIZE_MULT+2+READ_BL_LEN-10);

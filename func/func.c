@@ -1,8 +1,9 @@
 #include "func.h"
 
-void floatToString(float num,char*buff,unsigned char size)  //浮点型数，存储的字符数组，字符数组的长度
+void floatToString(float num,_base8*buff,_ubase8 size)  //浮点型数，存储的字符数组，字符数组的长度
 {
-    int temp,i,j;
+    _base32 temp;
+    _ubase8 i;
     if(num>=0)//判断是否大于0
         buff[0] = ' ';
     else
@@ -14,9 +15,9 @@ void floatToString(float num,char*buff,unsigned char size)  //浮点型数，存
     for(i=0;temp!=0;i++)//计算整数部分的位数
         temp /=10;
     temp =(int)num;
-    for(j=i;j>0;j--)//将整数部分转换成字符串型
+    for(;i>0;i--)//将整数部分转换成字符串型
     {
-        buff[j] = temp%10+'0';
+        buff[i] = temp%10+'0';
         temp /=10;
     }
     if(i==0)

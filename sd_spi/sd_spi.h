@@ -1,16 +1,14 @@
 #ifndef __SD_SPI_H__
 #define __SD_SPI_H__
-#include "stm32f1xx_hal.h"
+#include "../module_conf.h"
 #include "spi.h"
 #include <string.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define _sd_False       0
-#define _sd_True        1
-#define _sd_CS          DD5
-#define _sd_CS_Set      HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_SET)
-#define _sd_CS_Reset    HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, GPIO_PIN_RESET)
+extern void _gpio_Write(_ubase8 gpioNum,_ubase8 gpioStatus);
+#define _sd_CS_Set _gpio_Write(_sd_pinCS,_gpio_HIGH)
+#define _sd_CS_Reset _gpio_Write(_sd_pinCS,_gpio_LOW)
 
 #define _sd_Spi_Speed_HIGH  1
 #define _sd_Spi_Speed_LOW   0
@@ -61,9 +59,9 @@ extern "C" {
 #define RES_SD_V1  0x05
 
 
-unsigned char sdInit();
-unsigned char sdGetCID(unsigned char *cid);
-unsigned int sdGetCapacityKB();
+_ubase8 sdInit();
+_ubase8 sdGetCID(_ubase8 *cid);
+_ubase32 sdGetCapacityKB();
 #ifdef __cplusplus
 }
 #endif

@@ -1,31 +1,31 @@
 #ifndef __MPU__
 #define __MPU__
-
+#include "../module_conf.h"
 #include "i2c.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+extern void _time_delayMs(_ubase16 x);
 #define _mpu_Adress 0x68
-#define _mpu_DelayMs(x)  delay(x)
+#define _mpu_DelayMs(x)  _time_delayMs(x)
 struct mpu_Read
 {
-    unsigned char ACCEL_XOUT;
-    unsigned char ACCEL_YOUT;
-    unsigned char ACCEL_ZOUT;
+    _ubase8 ACCEL_XOUT;
+    _ubase8 ACCEL_YOUT;
+    _ubase8 ACCEL_ZOUT;
 
-    unsigned char TEMP_OUT;
+    _ubase8 TEMP_OUT;
 
-    unsigned char GYRO_XOUT;
-    unsigned char GYRO_YOUT;
-    unsigned char GYRO_ZOUT;
+    _ubase8 GYRO_XOUT;
+    _ubase8 GYRO_YOUT;
+    _ubase8 GYRO_ZOUT;
 };
 
 extern struct mpu_Read mpu_Read;
 
 void mpuInit(void);
-short mpuReadData(unsigned char reg_address);
+_base16 mpuReadData(_ubase8 reg_address);
 
 #ifdef __cplusplus
 }

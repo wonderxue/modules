@@ -1,6 +1,6 @@
 #ifndef __OLED_H__
 #define __OLED_H__
-
+#include "../module_conf.h"
 #include "i2c.h"
 
 #ifdef __cplusplus
@@ -12,29 +12,29 @@ extern "C" {
 
 struct oled_DisMode
 {
-    unsigned char horiz;
-    unsigned char verti;
-    unsigned char page;
+    _ubase8 horiz;
+    _ubase8 verti;
+    _ubase8 page;
 };
 
 struct oled_Frame
 {
-    unsigned char frame5;
-    unsigned char frame64;
-    unsigned char frame128;
-    unsigned char frame256;
-    unsigned char frame3;
-    unsigned char frame4;
-    unsigned char frame25;
-    unsigned char frame2;
+    _ubase8 frame5;
+    _ubase8 frame64;
+    _ubase8 frame128;
+    _ubase8 frame256;
+    _ubase8 frame3;
+    _ubase8 frame4;
+    _ubase8 frame25;
+    _ubase8 frame2;
 };
 
 struct oled_Dir
 {
-    unsigned char right;
-    unsigned char left;
-    unsigned char up_right;
-    unsigned char uo_left;
+    _ubase8 right;
+    _ubase8 left;
+    _ubase8 up_right;
+    _ubase8 uo_left;
 };
 extern struct oled_DisMode oled_DisMode;
 extern struct oled_Frame oled_Frame;
@@ -45,16 +45,16 @@ void oledCls(void);
 void oledFill(void);
 void oledOff(void);
 void oledOn(void);
-void oledStartPage(unsigned char pag, unsigned int seg);
-void oledAreaHoriz(unsigned int colu1, unsigned int colu2);
-void oledAreaVerti(unsigned int page1, unsigned int page2);
-void oledStartLine(unsigned char line);
-void oledSetPos(unsigned char x, unsigned char y);
-void oledDisplayMode(unsigned char oled_DisMode);
-void oledShowChar(unsigned char x, unsigned char y, unsigned char chr, unsigned char Char_Size);
-void oledShowNum(unsigned char x, unsigned char y, unsigned int num, unsigned char len, unsigned char size2);
-void oledShowString(unsigned char x, unsigned char y, unsigned char *chr, unsigned char Char_Size);
-void oledScroll(unsigned char oled_Dir, unsigned char oled_Frame, unsigned char vs_page, unsigned char vd_page, unsigned char row);
+void oledStartPage(_ubase8 pag, _ubase8 seg);
+void oledAreaHoriz(_ubase8 colu1, _ubase8 colu2);
+void oledAreaVerti(_ubase8 page1, _ubase8 page2);
+void oledStartLine(_ubase8 line);
+void oledSetPos(_ubase8 x, _ubase8 y);
+void oledDisplayMode(_ubase8 oled_DisMode);
+void oledShowChar(_ubase8 x, _ubase8 y, _ubase8 chr, _ubase8 Char_Size);
+void oledShowNum(_ubase8 x, _ubase8 y, _ubase8 num, _ubase8 len, _ubase8 size2);
+void oledShowString(_ubase8 x, _ubase8 y, _ubase8 *chr, _ubase8 Char_Size);
+void oledScroll(_ubase8 oled_Dir, _ubase8 oled_Frame, _ubase8 vs_page, _ubase8 vd_page, _ubase8 row);
 
 #ifdef __cplusplus
 }

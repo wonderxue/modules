@@ -1,25 +1,25 @@
 #include "tft.h"
-unsigned char _tft_Fd;
+_ubase8 _tft_Fd;
 
-void _tft_WriteCmd(unsigned char Cmd)
+void _tft_WriteCmd(_ubase8 Cmd)
 {
    _tft_RS_L;
    spiByteTransfer(_tft_Fd,Cmd,spiMode.spi_Mode_2);
 }
 
-void _tft_WriteByteData(unsigned char Data)
+void _tft_WriteByteData(_ubase8 Data)
 {
    _tft_RS_H;
    spiByteTransfer(_tft_Fd,Data,spiMode.spi_Mode_2);
 }
 
-void _tft_WriteWordData(unsigned short Data)
+void _tft_WriteWordData(_ubase16 Data)
 {
    _tft_RS_H;
    spiWordTransfer(_tft_Fd,Data,spiMode.spi_Mode_2);
 }
 
-void tftWriteReg(unsigned char Index,unsigned char Data)
+void tftWriteReg(_ubase8 Index,_ubase8 Data)
 {
   _tft_WriteCmd(Index);
   _tft_WriteByteData(Data);
@@ -38,7 +38,7 @@ void tftInit(void)
   _tft_LED_Out;
   _tft_RS_Out;
   _tft_RST_Out;
-  _tft_Fd=spiRegist(_tft_CS);
+  _tft_Fd=spiRegist(_tft_pinCS);
   tftReset();
   _tft_LED_H;
   //0x10sleepin  0x11sleepout 
@@ -170,7 +170,7 @@ void tftInit(void)
   _tft_WriteCmd(0x29);
 }
 
-void tftSetRegion(unsigned short x_start,unsigned short y_start,unsigned short x_end,unsigned short y_end)
+void tftSetRegion(_ubase8 x_start,_ubase8 y_start,_ubase8 x_end,_ubase8 y_end)
 {   
   _tft_WriteCmd(0x2a);
   _tft_WriteByteData(0x00);
@@ -187,14 +187,14 @@ void tftSetRegion(unsigned short x_start,unsigned short y_start,unsigned short x
   _tft_WriteCmd(0x2c);
 }
 
-void tftSetXY(unsigned short x,unsigned short y)
+void tftSetXY(_ubase8 x,_ubase8 y)
 {
     tftSetRegion(x,y,x,y);
 }
 
-void tftDrawArea(unsigned short x1,unsigned short y1,unsigned short x2,unsigned short y2,unsigned short *Data)
+void tftDrawArea(_ubase8 x1,_ubase8 y1,_ubase8 x2,_ubase8 y2,_ubase16 *Data)
 {
-  unsigned char i,j;
+  _ubase8 i,j;
   tftSetRegion(x1,y1,x2,y2);
   for(i=y1;i<=y2;i++)
   for(j=x1;j<=x2;j++)
@@ -203,7 +203,7 @@ void tftDrawArea(unsigned short x1,unsigned short y1,unsigned short x2,unsigned 
     Data++;
   }
 }
-void tftClear(unsigned short Color)
+void tftClear(_ubase16 Color)
 { 
    unsigned int i,m;
    tftSetRegion(0,0,127,179);

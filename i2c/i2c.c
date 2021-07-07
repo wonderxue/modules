@@ -1,6 +1,6 @@
 #include "i2c.h"
 extern void logReport(char * source,char * code,char );
-unsigned char _i2c_TimeOut = 200;
+_ubase8 _i2c_TimeOut = 200;
 void _i2c_Error(char *code)
 {
     ErrorReport("--I2C--",code);
@@ -41,7 +41,7 @@ void _i2c_SendAck(_Bool ack) //低 应答
 }
 _Bool _i2c_WaitAck()
 {
-    unsigned char tempTime = 0;
+    _ubase8 tempTime = 0;
     _i2c_SDA_In; //配置为上拉输入。
     _i2c_SDA_H;  //主机释放数据总线，等待从机产生应答信号
     _i2c_DelayUs(1);
@@ -61,7 +61,7 @@ _Bool _i2c_WaitAck()
     _i2c_SCL_L;
     return 0; //如果有响应的话就返回0.
 }
-_Bool _i2c_Write(unsigned char data)
+_Bool _i2c_Write(_ubase8 data)
 {
     _i2c_SDA_Out;
     _i2c_SCL_L;
@@ -83,9 +83,9 @@ _Bool _i2c_Write(unsigned char data)
     }
     return _i2c_WaitAck();
 }
-unsigned char _i2c_Read(_Bool ack)
+_ubase8 _i2c_Read(_Bool ack)
 {
-    unsigned char data = 0; //接收到的数据
+    _ubase8 data = 0; //接收到的数据
     _i2c_SDA_In;
     for (int i = 0; i < 8; i++)
     {
@@ -101,7 +101,7 @@ unsigned char _i2c_Read(_Bool ack)
     _i2c_SendAck(ack);
     return data;
 }
-unsigned char i2cBegin(unsigned short dev_addr)
+_ubase8 i2cBegin(unsigned short dev_addr)
 {
     _i2c_SCL_Out;
     _i2c_SDA_Out;
@@ -111,10 +111,10 @@ void i2cSetTimeOut(int count)
 {
     _i2c_TimeOut = count;
 }
-_Bool i2cWriteByte(unsigned char fid, unsigned char data)
+_Bool i2cWriteByte(_ubase8 fid, _ubase8 data)
 {
     _Bool status;
-    unsigned char dev_addr = fid << 1;
+    _ubase8 dev_addr = fid << 1;
     _i2c_Start();
     status = _i2c_Write(dev_addr);
     if (status)
@@ -129,10 +129,10 @@ _Bool i2cWriteByte(unsigned char fid, unsigned char data)
     _i2c_Stop();
     return status;
 }
-_Bool i2cWriteRegByte(unsigned char fid, unsigned char reg_addr, unsigned char data)
+_Bool i2cWriteRegByte(_ubase8 fid, _ubase8 reg_addr, _ubase8 data)
 {
     _Bool status;
-    unsigned char dev_addr = fid << 1;
+    _ubase8 dev_addr = fid << 1;
     _i2c_Start();
     status = _i2c_Write(dev_addr);
     if (status)
@@ -154,11 +154,11 @@ _Bool i2cWriteRegByte(unsigned char fid, unsigned char reg_addr, unsigned char d
     _i2c_Stop();
     return status;
 }
-unsigned char i2cReadbyte(unsigned char fid)
+_ubase8 i2cReadbyte(_ubase8 fid)
 {
     _Bool status;
-    unsigned char data;
-    unsigned char dev_addr = (fid << 1) + 1;
+    _ubase8 data;
+    _ubase8 dev_addr = (fid << 1) + 1;
     _i2c_Start();
     status = _i2c_Write(dev_addr);
     if (status)
@@ -171,11 +171,11 @@ unsigned char i2cReadbyte(unsigned char fid)
     _i2c_Stop();
     return data;
 }
-unsigned char i2cReadRegByte(unsigned char fid, unsigned char reg_addr)
+_ubase8 i2cReadRegByte(_ubase8 fid, _ubase8 reg_addr)
 {
     _Bool status;
-    unsigned char data;
-    unsigned char dev_addr = fid << 1;
+    _ubase8 data;
+    _ubase8 dev_addr = fid << 1;
     _i2c_Start();
     status = _i2c_Write(dev_addr);
     if (status)

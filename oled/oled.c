@@ -5,25 +5,25 @@ struct oled_Frame oled_Frame = {0, 1, 2, 3, 4, 5, 6, 7};
 struct oled_Dir oled_Dir = {0, 1, 2, 3};
 int _oled_fd;
 
-void _oled_WriteCmd(unsigned char cmd)
+void _oled_WriteCmd(_ubase8 cmd)
 {
     i2cWriteRegByte(_oled_fd, 0x00, cmd);
 }
 
-void _oled_WriteData(unsigned char data)
+void _oled_WriteData(_ubase8 data)
 {
     i2cWriteRegByte(_oled_fd, 0x40, data);
 }
-unsigned int _oled_Pow(unsigned char m, unsigned char n)
+_base32 _oled_Pow(_ubase8 m, _ubase8 n)
 {
-    unsigned int result = 1;
+    _base32 result = 1;
     while (n--)
         result *= m;
     return result;
 }
 void oledCls()
 {
-    unsigned char i, j;
+    _ubase8 i, j;
     for (i = 0; i < 8; i++)
     {
         _oled_WriteCmd(0xb0 + i);
@@ -33,7 +33,7 @@ void oledCls()
 }
 void oledFill()
 {
-    unsigned char i, j;
+    _ubase8 i, j;
     for (i = 0; i < 8; i++)
     {
         _oled_WriteCmd(0xb0 + i);
@@ -98,48 +98,48 @@ void oledInit()
     _oled_WriteCmd(0x30);
 }
 
-void oledStartPage(unsigned char pag, unsigned int seg)
+void oledStartPage(_ubase8 pag, _ubase8 seg)
 {
     _oled_WriteCmd(0xb0 + pag);
     _oled_WriteCmd(0x00 + seg % 16);
     _oled_WriteCmd(0x10 + seg / 16);
 }
 
-void oledStartLine(unsigned char line)
+void oledStartLine(_ubase8 line)
 {
     _oled_WriteCmd(0x40 + line);
 }
 
-void oledSetPos(unsigned char x, unsigned char y)
+void oledSetPos(_ubase8 x, _ubase8 y)
 {
     _oled_WriteCmd(0xb0 + y);
     _oled_WriteCmd(((x & 0xf0) >> 4) | 0x10);
     _oled_WriteCmd(x & 0x0f);
 }
 
-void oledAreaHoriz(unsigned int colu1, unsigned int colu2)
+void oledAreaHoriz(_ubase8 colu1, _ubase8 colu2)
 {
     _oled_WriteCmd(0x21);
     _oled_WriteCmd(colu1);
     _oled_WriteCmd(colu2);
 }
 
-void oledAreaVerti(unsigned int page1, unsigned int page2)
+void oledAreaVerti(_ubase8 page1, _ubase8 page2)
 {
     _oled_WriteCmd(0x22);
     _oled_WriteCmd(page1);
     _oled_WriteCmd(page2);
 }
 
-void oledDisplayMode(unsigned char mode)
+void oledDisplayMode(_ubase8 mode)
 {
     _oled_WriteCmd(0x20);
     _oled_WriteCmd(mode);
 }
 
-void oledShowChar(unsigned char x, unsigned char y, unsigned char chr, unsigned char Char_Size)
+void oledShowChar(_ubase8 x, _ubase8 y, _ubase8 chr, _ubase8 Char_Size)
 {
-    unsigned char c = 0, i = 0;
+    _ubase8 c = 0, i = 0;
     c = chr - ' ';
     if (x > 127)
     {
@@ -164,10 +164,10 @@ void oledShowChar(unsigned char x, unsigned char y, unsigned char chr, unsigned 
 }
 
 
-void oledShowNum(unsigned char x, unsigned char y, unsigned int num, unsigned char len, unsigned char size2)
+void oledShowNum(_ubase8 x, _ubase8 y, _ubase8 num, _ubase8 len, _ubase8 size2)
 {
-    unsigned char t, temp;
-    unsigned char enshow = 0;
+    _ubase8 t, temp;
+    _ubase8 enshow = 0;
     for (t = 0; t < len; t++)
     {
         temp = (num / _oled_Pow(10, len - t - 1)) % 10;
@@ -185,9 +185,9 @@ void oledShowNum(unsigned char x, unsigned char y, unsigned int num, unsigned ch
     }
 }
 
-void oledShowString(unsigned char x, unsigned char y, unsigned char *chr, unsigned char Char_Size)
+void oledShowString(_ubase8 x, _ubase8 y, _ubase8 *chr, _ubase8 Char_Size)
 {
-    unsigned char j = 0;
+    _ubase8 j = 0;
     while (chr[j] != '\0')
     {
         oledShowChar(x, y, chr[j], Char_Size);
@@ -201,7 +201,7 @@ void oledShowString(unsigned char x, unsigned char y, unsigned char *chr, unsign
     }
 }
 
-void oledScroll(unsigned char dir, unsigned char frame, unsigned char vs_page, unsigned char vd_page, unsigned char row)
+void oledScroll(_ubase8 dir, _ubase8 frame, _ubase8 vs_page, _ubase8 vd_page, _ubase8 row)
 {
     _oled_WriteCmd(0x2E);
     //hor
