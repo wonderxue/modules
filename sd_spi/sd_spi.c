@@ -1,11 +1,7 @@
 #include "sd_spi.h"
 //_ubase8 _sd_fd;//HAL库不用
-extern void ErrorReport(char *source, char *code);
+extern void logReport(_ubase8 loglevel,_base8 *file,_base8 *function, _base8 *info);
 _ubase32 _sd_TimeOut = 500;
-void _sd_Error(char *code)
-{
-  ErrorReport("--SD--  ", code);
-}
 void _sd_SpiSpeedSet(_Bool Speed)
 {
   if(Speed==_sd_Spi_Speed_HIGH)
@@ -44,7 +40,7 @@ _ubase8 _sd_SendCMD(_ubase8 ucmd, _ubase8 *arg, _ubase8 crc)
   } while ((res == MSD_RESPONSE_FAILURE) && (++i < _sd_TimeOut) /* condition */);
   if (i == _sd_TimeOut)
   {
-    _sd_Error("Cmd time out");
+    logReport(2,"sd_spi.c","_sd_SendCMD","Cmd time out");
   }
   _sd_CS_Set;
   return res;
@@ -64,7 +60,7 @@ _Bool _sd_Reset()
   } while ((res != MSD_IN_IDLE_STATE) && (++i < _sd_TimeOut));
   if (i == _sd_TimeOut)
   {
-    _sd_Error("Reset time out");
+    logReport(1,"sd_spi.c","_sd_Reset","Reset time out");
     return _FALSE;
   }
   return _TRUE;
@@ -88,11 +84,11 @@ _ubase8 _sd_Init()
     _sd_CS_Set;
     if (out[2] != 0x01)
     {
-      _sd_Error("SD_V2 identified but voltage not satisfied");
+      logReport(2,"sd_spi.c","_sd_Init","SD_V2 identified but voltage not satisfied");
     }
     if (out[3] != 0xaa)
     {
-      _sd_Error("SD_V2 identified but return data not correct");
+      logReport(2,"sd_spi.c","_sd_Init","SD_V2 identified but return data not correct");
     }
     arg[0] = 0x40;
     _sd_CS_Reset;
@@ -103,12 +99,12 @@ _ubase8 _sd_Init()
       /* code */
       out[0] = _sd_SendCMD(CMD55, arg, Fake_CRC);
       if (out[0] != MSD_IN_IDLE_STATE)
-        _sd_Error("SD_V2 CMD55 response error");
+        logReport(2,"sd_spi.c","_sd_Init","SD_V2 CMD55 response error");
       out[1] = _sd_SendCMD(ACMD41, arg, Fake_CRC);
     } while ((out[1] != MSD_RESPONSE_NO_ERROR) && (++i < _sd_TimeOut));
     if (i == _sd_TimeOut)
     {
-      _sd_Error("SD_V2 identified but ACMD41 response time out");
+      logReport(1,"sd_spi.c","_sd_Init","SD_V2 identified but ACMD41 response time out");
       return SD_TYPE_ERR;
     }
 
@@ -120,7 +116,7 @@ _ubase8 _sd_Init()
     res = _sd_SendCMD(CMD58, arg, Fake_CRC);
     if (res != MSD_RESPONSE_NO_ERROR)
     {
-      _sd_Error("SD_V2 identified but get OCR info error");
+      logReport(1,"sd_spi.c","_sd_Init","SD_V2 identified but get OCR info error");
       return SD_TYPE_ERR;
     }
     _sd_CS_Reset;
@@ -139,7 +135,7 @@ _ubase8 _sd_Init()
       /* code */
       out[0] = _sd_SendCMD(CMD55, arg, Fake_CRC);
       if (out[0] != MSD_IN_IDLE_STATE)
-        _sd_Error("SD_V1 CMD55 response error");
+        logReport(2,"sd_spi.c","_sd_Init","SD_V1 CMD55 response error");
       else
         out[1] = _sd_SendCMD(ACMD41, arg, Fake_CRC);
     } while ((out[1] != MSD_RESPONSE_NO_ERROR) && (++i < _sd_TimeOut));
@@ -154,19 +150,19 @@ _ubase8 _sd_Init()
       } while ((res != MSD_RESPONSE_NO_ERROR) && (++i < _sd_TimeOut));
       if (i == _sd_TimeOut)
       {
-        _sd_Error("MMC initial timeout or sd unstable");
+        logReport(1,"sd_spi.c","_sd_Init","MMC initial timeout or sd unstable");
         return SD_TYPE_ERR;
       }
       res = _sd_SendCMD(CMD59, arg, Fake_CRC);
       if (res != MSD_RESPONSE_NO_ERROR)
       {
-        _sd_Error("MMC turn CRC check off error");
+        logReport(2,"sd_spi.c","_sd_Init","MMC turn CRC check off error");
       }
       arg[2] = 2; // sector size=512
       res = _sd_SendCMD(CMD16, arg, Fake_CRC);
       if (res != MSD_RESPONSE_NO_ERROR)
       {
-        _sd_Error("MMC set sector size error");
+        logReport(2,"sd_spi.c","_sd_Init","MMC set sector size error");
       }
       return SD_TYPE_MMC;
     }
@@ -189,7 +185,7 @@ _ubase8 sdGetCID(_ubase8 *cid)
   res=_sd_SendCMD(CMD10,arg,Fake_CRC);
   if(res!=MSD_RESPONSE_NO_ERROR)
   {
-    _sd_Error("Get CID error");
+    logReport(2,"sd_spi.c","sdGetCID","Get CID error");
     return _FALSE;
   }
   _sd_CS_Reset;
@@ -205,7 +201,7 @@ _ubase32 sdGetCapacityKB()
   res=_sd_SendCMD(CMD9,csd,Fake_CRC);
   if(res!=MSD_RESPONSE_NO_ERROR)
   {
-    _sd_Error("Get CSD error");
+    logReport(2,"sd_spi.c","sdGetCapacityKB","Get CSD error");
     return _FALSE;
   }
   _sd_CS_Reset;
@@ -214,14 +210,12 @@ _ubase32 sdGetCapacityKB()
   if(csd[0]&0xc0==0x40)
   {
     //v2
-    _sd_Error("----V2------");
     C_SIZE=csd[9]+((_ubase32)csd[8]<<8)+((_ubase32)(csd[7]&63)<<16)+1;
     Capacity=C_SIZE<<9;
   }
   else
   {
     //v1
-    _sd_Error("----V1------");
     C_SIZE=(csd[8]>>6)+((_ubase16)csd[7]<<2)+((_ubase16)(csd[6]&3)<<10);
     C_SIZE_MULT=((csd[10]&128)>>7)+((csd[9]&3)<<1);
     READ_BL_LEN=csd[5]&15;

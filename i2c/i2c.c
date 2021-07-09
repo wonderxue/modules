@@ -1,10 +1,6 @@
 #include "i2c.h"
-extern void logReport(char * source,char * code,char );
+extern void logReport(_ubase8 loglevel,_base8 *file,_base8 *function, _base8 *info);
 _ubase8 _i2c_TimeOut = 200;
-void _i2c_Error(char *code)
-{
-    ErrorReport("--I2C--",code);
-}
 
 void _i2c_Start()
 {
@@ -120,12 +116,12 @@ _Bool i2cWriteByte(_ubase8 fid, _ubase8 data)
     if (status)
     {
         _i2c_Stop();
-        _i2c_Error("write dev_addr error");
+        logReport(2,"i2c.c","i2cWriteByte","write dev_addr error");
         return status;
     }
     status = _i2c_Write(data);
     if (status)
-        _i2c_Error("write data error");
+        logReport(2,"i2c.c","i2cWriteByte","write data error");
     _i2c_Stop();
     return status;
 }
@@ -138,19 +134,19 @@ _Bool i2cWriteRegByte(_ubase8 fid, _ubase8 reg_addr, _ubase8 data)
     if (status)
     {
         _i2c_Stop();
-        _i2c_Error("write dev_addr error");
+        logReport(2,"i2c.c","i2cWriteRegByte","write dev_addr error");
         return status;
     }
     status = _i2c_Write(reg_addr);
     if (status)
     {
         _i2c_Stop();
-        _i2c_Error("write reg_addr error");
+        logReport(2,"i2c.c","i2cWriteRegByte","write reg_addr error");
         return status;
     }
     status = _i2c_Write(data);
     if (status)
-        _i2c_Error("write data error");
+        logReport(2,"i2c.c","i2cWriteRegByte","write data error");
     _i2c_Stop();
     return status;
 }
@@ -164,7 +160,7 @@ _ubase8 i2cReadbyte(_ubase8 fid)
     if (status)
     {
         _i2c_Stop();
-        _i2c_Error("read dev_addr error");
+        logReport(2,"i2c.c","i2cReadbyte","read dev_addr error");
         return status;
     }
     data = _i2c_Read(1);
@@ -181,14 +177,14 @@ _ubase8 i2cReadRegByte(_ubase8 fid, _ubase8 reg_addr)
     if (status)
     {
         _i2c_Stop();
-        _i2c_Error("read dev_addr1 error");
+        logReport(2,"i2c.c","i2cReadRegByte","read dev_addr1 error");
         return status;
     }
     status = _i2c_Write(reg_addr);
     if (status)
     {
         _i2c_Stop();
-        _i2c_Error("read reg_addr error");
+        logReport(2,"i2c.c","i2cReadRegByte","read reg_addr error");
         return status;
     }
     _i2c_Start();
@@ -196,7 +192,7 @@ _ubase8 i2cReadRegByte(_ubase8 fid, _ubase8 reg_addr)
     if (status)
     {
         _i2c_Stop();
-        _i2c_Error("read dev_addr2 error");
+        logReport(2,"i2c.c","i2cReadRegByte","read dev_addr2 error");
         return status;
     }
     data = _i2c_Read(1);

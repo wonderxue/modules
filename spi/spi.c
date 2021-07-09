@@ -12,10 +12,6 @@ void spiSetFrequency(_ubase8 delayPeriod)
 {
     _spi_FrequencyPeriod = delayPeriod;
 }
-void _spi_Error(_base8 *code)
-{
-    ErrorReport("--SPI--", code);
-}
 void _spiSelectPin(_ubase8 spiSelectPin, enum _spi_CS_Status spi_CS_Status)
 {
     if (spiSelectPin == 0) //用于产生时钟周期，并不传输数据
@@ -141,7 +137,7 @@ _ubase8 *spiMultiByteTransfer(_ubase8 fd, const _ubase8 *data, _ubase8 byteNum, 
 {
     if (byteNum > 8)
     {
-        _spi_Error("byteNum oversize (byteNum<=8)");
+        logReport(1,"spi.c","spiMultiByteTransfer","byteNum oversize (byteNum<=8)");
         return NULL;
     }
     //将源数据拷贝，避免通过指针更改
@@ -161,7 +157,7 @@ _ubase8 *spiMultiByteTransfer(_ubase8 fd, const _ubase8 *data, _ubase8 byteNum, 
         _spi_TransferModeByte3(fd, byteNum);
         break;
     default:
-        _spi_Error("spiMode Error");
+        _spi_Error(1,"spi.c","spiMultiByteTransfer","spiMode Error");
         return NULL;
         break;
     }
